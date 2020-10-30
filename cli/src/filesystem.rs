@@ -64,8 +64,8 @@ pub fn get_open_command() -> std::string::String {
 }
 
 pub fn get_etl_command() -> std::string::String {
-    let path = format!("{}/{}/{}", get_base_dirname(), "bin", "whale");
-    if Path::new(&*path).exists() {
+    let path = format!("{}/bin/whale", get_base_dirname());
+    if Path::new(&path).exists() {
         format!("{} pull", path)
     } else {
         "wh pull".to_string()
@@ -73,13 +73,10 @@ pub fn get_etl_command() -> std::string::String {
 }
 
 pub fn get_libexec_dirname() -> std::string::String {
-    let executable = env::current_exe().unwrap();
-    let executable = std::fs::canonicalize(executable).unwrap();
-    let path = match executable.parent() {
-        Some(name) => name,
+    match env::current_exe().and_then(std::fs::canonicalize).unwrap().parent() {
+        Some(name) => format!("{}/../{}", name.display(), "libexec"),
         _ => panic!(),
-    };
-    format!("{}/../{}", path.display(), "libexec")
+    }
 }
 
 pub fn get_activate_filename() -> std::string::String {
